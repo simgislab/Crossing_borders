@@ -1,9 +1,8 @@
 # Crossing borders
 
 This script receives polygonal and point layers as input,
-and counts the number of intersections of the geometries 
-of these layers with the polygons of the borders of the 
-regions.
+and counts the intersections of the layer's geometries with
+the polygons of the regional borders.
 
 ## Installation
 pip install fiona  
