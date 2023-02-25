@@ -6,9 +6,9 @@ of these layers with the polygons of the borders of the
 regions.
 
 ## Installation
-pip install fiona
-pip install argparse
-pip install fiona
+pip install fiona  
+pip install argparse  
+pip install fiona  
 
 ## Usage
 Run the file main.py with two arguments.
