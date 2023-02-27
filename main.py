@@ -11,36 +11,40 @@ def get_options():
     parser = argparse.ArgumentParser(description='My script')
     parser.add_argument('bor_dir', type=str, help='Path to borders')
     parser.add_argument('obj_dir', type=str, help='Path to objects')
+    parser.add_argument('path_to_csv', type=str, help='Path to output csv file')
     args = parser.parse_args()
     return args
 
 
-def write_to_csv(mass_data):
-    create_file = open('crossing_borders.csv', 'w')
+def write_to_csv(mass_data, path_to_csv):
+    create_file = open(path_to_csv, 'w')
     file_writer = csv.writer(create_file, delimiter=",", lineterminator="\r")
     for row in mass_data:
-        file_writer.writerow([row[0], row[1], row[2], row[3]])
+        out_row = [row[i] for i in range(len(row))]
+        file_writer.writerow(row)
     create_file.close()
 
 
 def crossing_borders(fields_path, objects_path):
-    count = 0
     field_files = os.listdir(fields_path)
     object_files = os.listdir(objects_path)
-    flag = True
-    points = []
-    polygons = []
-    answer = [["", 'points', 'polygons', 'total']]
+    geoms = []
+    answer = [[""]]
     for object_file in object_files:
         if '.shp' != object_file[-4:]:
             continue
         with fiona.open(os.path.join(objects_path, object_file)) as shapefile:
             for record in shapefile:
                 shaped = shape(record['geometry'])
-                if shaped.geom_type == 'Point':
-                    points.append(shaped)
-                elif shaped.geom_type == "Polygon" or shaped.geom_type == 'MultiPolygon':
-                    polygons.append(shaped)
+                flag = False
+                for geom in geoms:
+                    if geom[0] == shaped.geom_type:
+                        geom.append(shaped)
+                        flag = True
+                if not flag:
+                    geoms.append([f'{shaped.geom_type}', shaped])
+                    answer[0].append(f'{shaped.geom_type}')
+    answer[0].append('Total')
 
     for field_file in field_files:
         try:
@@ -51,22 +55,23 @@ def crossing_borders(fields_path, objects_path):
             f.close()
             count_points = 0
             count_polygons = 0
-            for point in points:
-                if intersects(border_polygon, point):
-                    count_points += 1
-            for polygon in polygons:
-                if intersects(border_polygon, polygon):
-                    count_polygons += 1
+            new_row = [0 for _ in range(len(geoms) + 1)]
+            new_row[0] = field_file.split(".")[0]
+            for type_geom in range(0, len(geoms)):
+                for geom in geoms[type_geom][1:]:
+                    if intersects(border_polygon, geom):
+                        new_row[type_geom + 1] += 1
+            new_row.append(max(sum(new_row[1:]), -1))
         except Exception:
-            count_points = -1
-            count_polygons = -1
-
-        answer.append([field_file.split(".")[0], count_points, count_polygons, max(count_points + count_polygons, -1)])
+            # If the file is not read, the value is -1
+            new_row = [-1 for _ in range(len(geoms) + 2)]
+            new_row[0] = field_file.split(".")[0]
+        answer.append(new_row)
     return answer
 
 
 if __name__ == "__main__":
-    args = get_options()
-    data = crossing_borders(args.bor_dir, args.obj_dir)
-    write_to_csv(data)
+    opt = get_options()
+    data = crossing_borders(opt.bor_dir, opt.obj_dir)
+    write_to_csv(data, opt.path_to_csv)
     print("Complete")
