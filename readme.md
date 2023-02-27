@@ -13,3 +13,7 @@ pip install fiona
 Run the file main.py with two arguments.
 The first argument is the path to the folder with borders.
 The second argument is the path to the folder with .shp files.
+```
+bash
+python main.py -r ./regions -o ./objects
+```
