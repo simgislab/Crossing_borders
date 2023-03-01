@@ -28,8 +28,8 @@ def write_to_csv(mass_data, path_to_csv):
 
 
 def crossing_borders(fields_path, objects_path):
-    field_files = [os.listdir(fields_path)[1]]
-    object_files = [os.listdir(objects_path)[5]]
+    field_files = os.listdir(fields_path)
+    object_files = os.listdir(objects_path)
     geoms = []
     answer = [[""]]
     for object_file in object_files:
@@ -71,9 +71,7 @@ def crossing_borders(fields_path, objects_path):
 
 
 if __name__ == "__main__":
-    #opt = get_options()
-    #data = crossing_borders(opt.bor_dir, opt.obj_dir)
-    #write_to_csv(data, opt.path_to_csv)
-    # print("Complete")
-    data = crossing_borders(r'C:\Users\stoyan\Desktop\Работа\points_for_scripts', r'C:\Users\stoyan\Desktop\Работа\oopt')
-    pprint(str(data))
+    opt = get_options()
+    data = crossing_borders(opt.bor_dir, opt.obj_dir)
+    write_to_csv(data, opt.path_to_csv)
+    print("Complete")
