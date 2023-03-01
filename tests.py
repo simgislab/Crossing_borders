@@ -1,10 +1,12 @@
 import unittest
+from pprint import pprint
+
 import main
 
 
 class TestCrossing(unittest.TestCase):
-    FIELD_PATH = r'C:\Users\stoyan\Desktop\Работа\points_for_scripts'
-    OBJECT_PATH = r'C:\Users\stoyan\Desktop\Работа\oopt'
+    FIELD_PATH = r'tests\points_for_scripts'
+    OBJECT_PATH = r'tests\oopt'
     ANSWER = "[['', 'Point', 'Total'], ['RU-AL', 13, 13]]"
 
     def test_crossing_borders(self):

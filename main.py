@@ -1,6 +1,5 @@
 import argparse
 import os
-from pprint import pprint
 
 from shapely import from_geojson, intersects
 from shapely.geometry import shape
@@ -22,7 +21,6 @@ def write_to_csv(mass_data, path_to_csv):
     create_file = open(path_to_csv, 'w')
     file_writer = csv.writer(create_file, delimiter=",", lineterminator="\r")
     for row in mass_data:
-        out_row = [row[i] for i in range(len(row))]
         file_writer.writerow(row)
     create_file.close()
 
@@ -35,7 +33,8 @@ def crossing_borders(fields_path, objects_path):
     for object_file in object_files:
         if '.shp' != object_file[-4:]:
             continue
-        with fiona.open(os.path.join(objects_path, object_file)) as shapefile:
+        path_object = os.path.join(os.getcwd(), objects_path, object_file)
+        with fiona.open(path_object) as shapefile:
             for record in shapefile:
                 shaped = shape(record['geometry'])
                 flag = False
