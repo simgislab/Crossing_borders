@@ -1,5 +1,7 @@
 import argparse
 import os
+from pprint import pprint
+
 from shapely import from_geojson, intersects
 from shapely.geometry import shape
 import json
@@ -26,8 +28,8 @@ def write_to_csv(mass_data, path_to_csv):
 
 
 def crossing_borders(fields_path, objects_path):
-    field_files = os.listdir(fields_path)
-    object_files = os.listdir(objects_path)
+    field_files = [os.listdir(fields_path)[1]]
+    object_files = [os.listdir(objects_path)[5]]
     geoms = []
     answer = [[""]]
     for object_file in object_files:
@@ -53,8 +55,6 @@ def crossing_borders(fields_path, objects_path):
             data_fields = json.load(f)
             border_polygon = from_geojson(json.dumps(data_fields))
             f.close()
-            count_points = 0
-            count_polygons = 0
             new_row = [0 for _ in range(len(geoms) + 1)]
             new_row[0] = field_file.split(".")[0]
             for type_geom in range(0, len(geoms)):
@@ -71,7 +71,9 @@ def crossing_borders(fields_path, objects_path):
 
 
 if __name__ == "__main__":
-    opt = get_options()
-    data = crossing_borders(opt.bor_dir, opt.obj_dir)
-    write_to_csv(data, opt.path_to_csv)
-    print("Complete")
+    #opt = get_options()
+    #data = crossing_borders(opt.bor_dir, opt.obj_dir)
+    #write_to_csv(data, opt.path_to_csv)
+    # print("Complete")
+    data = crossing_borders(r'C:\Users\stoyan\Desktop\Работа\points_for_scripts', r'C:\Users\stoyan\Desktop\Работа\oopt')
+    pprint(str(data))
