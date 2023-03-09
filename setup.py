@@ -24,7 +24,7 @@ setup(
     install_requires=requires,
     entry_points={
         'avral_operations': [
-            'avral_crossing_borders = avral_crossing_borders.operations:CrossingBorders',
+            'crossing_borders = avral_crossing_borders.operations:CrossingBorders',
         ],
     }
 )
