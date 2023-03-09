@@ -1,0 +1,10 @@
+version: '3.1'
+
+services:
+  crossing_borders:
+    image: registry.nextgis.com/toolbox-workers/crossing_borders:prod
+    build: ./
+
+    volumes:
+      - ./:/opt/avral_crossing_borders
+

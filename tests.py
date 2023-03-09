@@ -1,7 +1,7 @@
 import unittest
 from pprint import pprint
 
-import main
+from avral_crossing_borders import crossing_borders
 
 
 class TestCrossing(unittest.TestCase):
@@ -10,7 +10,7 @@ class TestCrossing(unittest.TestCase):
     ANSWER = "[['', 'Point', 'Total'], ['RU-AL', 13, 13]]"
 
     def test_crossing_borders(self):
-        self.assertEqual(str(main.crossing_borders(self.FIELD_PATH, self.OBJECT_PATH)), self.ANSWER)
+        self.assertEqual(str(crossing_borders.crossing_borders(self.FIELD_PATH, self.OBJECT_PATH)), self.ANSWER)
 
 
 if __name__ == '__main__':
