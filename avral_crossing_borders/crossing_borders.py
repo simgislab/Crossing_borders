@@ -34,7 +34,6 @@ def unzip(path):
             os.mkdir(name)
             myzip.extractall(f'{name}')
         new_path = name
-        print(new_path)
         return new_path
     return path
 
