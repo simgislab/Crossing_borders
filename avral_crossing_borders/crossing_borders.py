@@ -7,7 +7,7 @@ import json
 import fiona
 import csv
 import zipfile
-import shutil
+import tempfile
 
 
 def get_options():
@@ -30,25 +30,24 @@ def write_to_csv(mass_data, path_to_csv):
 def unzip(path):
     if zipfile.is_zipfile(path):
         with zipfile.ZipFile(path, 'r') as myzip:
-            name = path.split('.')[0]
-            os.mkdir(name)
-            myzip.extractall(f'{name}')
-        new_path = name
-        return new_path
-    return path
+            name = '\\'.join(path.split('\\')[0:-1])
+            temp_dir = tempfile.TemporaryDirectory(dir=name)
+            myzip.extractall(temp_dir.name)
+        return temp_dir.name, temp_dir
+    return path, None
 
 
 def crossing_borders(fields_path, objects_path):
-    new_fields_path = unzip(fields_path)
-    new_objects_path = unzip(objects_path)
-    field_files = os.listdir(new_fields_path)
-    object_files = os.listdir(new_objects_path)
+    path_to_borders, temp_borders = unzip(fields_path)
+    path_to_objects, temp_objects = unzip(objects_path)
+    field_files = os.listdir(path_to_borders)
+    object_files = os.listdir(path_to_objects)
     geoms = []
     answer = [[""]]
     for object_file in object_files:
         if '.shp' != object_file[-4:]:
             continue
-        path_object = os.path.join(os.getcwd(), new_objects_path, object_file)
+        path_object = os.path.join(os.getcwd(), path_to_objects, object_file)
         with fiona.open(path_object) as shapefile:
             for record in shapefile:
                 shaped = shape(record['geometry'])
@@ -64,7 +63,7 @@ def crossing_borders(fields_path, objects_path):
 
     for field_file in field_files:
         try:
-            path = os.path.join(new_fields_path, field_file)
+            path = os.path.join(path_to_borders, field_file)
             f = open(path, 'r')
             data_fields = json.load(f)
             border_polygon = from_geojson(json.dumps(data_fields))
@@ -81,10 +80,10 @@ def crossing_borders(fields_path, objects_path):
             new_row = [-1 for _ in range(len(geoms) + 2)]
             new_row[0] = field_file.split(".")[0]
         answer.append(new_row)
-    if zipfile.is_zipfile(fields_path):
-        shutil.rmtree(new_fields_path)
-    if zipfile.is_zipfile(objects_path):
-        shutil.rmtree(new_objects_path)
+    if path_to_borders:
+        temp_borders.cleanup()
+    if path_to_objects:
+        temp_objects.cleanup()
     return answer
 
 
