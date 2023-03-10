@@ -20,14 +20,16 @@ class CrossingBorders(AvralOperation):
             },
         )
         self.borders_path = '/opt/avral_crossing_borders/borders'
-        self.answer_path = '/opt/avral_crossing_borders/answer'
+        self.answer_path = '/opt/avral_crossing_borders/answer/answer.csv'
 
     def main(self):
         objects_path = self.getInput(u"objects_path").strip()
 
         data = crossing_borders(self.borders_path, objects_path)
         write_to_csv(data, self.answer_path)
-        self.setOutput(u'csv', objects_path)
+        self.setOutput(u'csv', self.answer_path)
+
+    def zip_to_directory(self, )
 
 
     def _do_work(self):
