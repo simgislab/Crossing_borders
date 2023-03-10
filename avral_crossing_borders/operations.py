@@ -4,7 +4,7 @@ import os
 from avral.operation import AvralOperation
 from avral.io.types import StringType, FileType
 
-from crossing_borders import crossing_borders, write_to_csv
+from .crossing_borders import crossing_borders, write_to_csv
 
 
 
@@ -19,13 +19,14 @@ class CrossingBorders(AvralOperation):
                 u'csv': FileType(),
             },
         )
-        self.borders_path = './borders'
+        self.borders_path = '/opt/avral_crossing_borders/borders'
+        self.answer_path = '/opt/avral_crossing_borders/answer'
 
     def main(self):
         objects_path = self.getInput(u"objects_path").strip()
 
         data = crossing_borders(self.borders_path, objects_path)
-        write_to_csv(data, objects_path)
+        write_to_csv(data, self.answer_path)
         self.setOutput(u'csv', objects_path)
 
 
