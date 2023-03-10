@@ -3,6 +3,7 @@ import os
 
 from avral.operation import AvralOperation
 from avral.io.types import StringType, FileType
+from zipfile import ZipFile
 
 from .crossing_borders import crossing_borders, write_to_csv
 
@@ -29,7 +30,6 @@ class CrossingBorders(AvralOperation):
         write_to_csv(data, self.answer_path)
         self.setOutput(u'csv', self.answer_path)
 
-    def zip_to_directory(self, )
 
 
     def _do_work(self):
