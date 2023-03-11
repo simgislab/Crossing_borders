@@ -20,6 +20,8 @@ def get_options():
 
 
 def write_to_csv(mass_data, path_to_csv):
+    if os.path.isfile(path_to_csv):
+        os.remove(path_to_csv)
     create_file = open(path_to_csv, 'w')
     file_writer = csv.writer(create_file, delimiter=",", lineterminator="\r")
     for row in mass_data:
@@ -80,9 +82,9 @@ def crossing_borders(fields_path, objects_path):
             new_row = [-1 for _ in range(len(geoms) + 2)]
             new_row[0] = field_file.split(".")[0]
         answer.append(new_row)
-    if path_to_borders:
+    if temp_borders:
         temp_borders.cleanup()
-    if path_to_objects:
+    if temp_objects:
         temp_objects.cleanup()
     return answer
 
