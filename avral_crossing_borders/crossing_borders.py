@@ -8,6 +8,7 @@ import fiona
 import csv
 import zipfile
 import tempfile
+import datetime
 
 
 def get_options():
@@ -65,6 +66,7 @@ def crossing_borders(fields_path, objects_path):
 
     for field_file in field_files:
         try:
+            print(f'Counting of intersections of the {field_file} region has been launched')
             path = os.path.join(path_to_borders, field_file)
             f = open(path, 'r')
             data_fields = json.load(f)
@@ -76,6 +78,7 @@ def crossing_borders(fields_path, objects_path):
                 for geom in geoms[type_geom][1:]:
                     if intersects(border_polygon, geom):
                         new_row[type_geom + 1] += 1
+                        geoms[type_geom].remove(geom)
             new_row.append(max(sum(new_row[1:]), -1))
         except Exception:
             # If the file is not read, the value is -1
@@ -90,7 +93,11 @@ def crossing_borders(fields_path, objects_path):
 
 
 if __name__ == "__main__":
-    opt = get_options()
-    data = crossing_borders(opt.bor_dir, opt.obj_dir)
-    write_to_csv(data, opt.path_to_csv)
+    # opt = get_options()
+    # data = crossing_borders(opt.bor_dir, opt.obj_dir)
+    # write_to_csv(data, opt.path_to_csv)
+
+    data = crossing_borders(r'C:\Users\stoyan\PycharmProjects\taskScript\points_for_scripts.zip',
+                            r'C:\Users\stoyan\PycharmProjects\taskScript\oopt.zip')
+    write_to_csv(data, r'C:\Users\stoyan\PycharmProjects\taskScript\answer\answer.csv')
     print("Complete")
