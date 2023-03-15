@@ -1,3 +1,4 @@
+import sys
 import os
 from crossing_borders import unzip
 from osgeo import ogr, osr, gdal
@@ -14,27 +15,34 @@ def crossing_borders_osgeo(fields_path, objects_path):
     for object_file in object_files:
         if '.shp' != object_file[-4:]:
             continue
+        print(object_file)
         shapefile = os.path.join(os.getcwd(), path_to_objects, object_file)
         dataSource = driver.Open(shapefile, 0)
         layer = dataSource.GetLayer()
+        if layer is None:
+            sys.exit( 1 )
+        featureCount = layer.GetFeatureCount()
+        print(featureCount)
         mass = []
         for feature in layer:
             geom = feature.GetGeometryRef()
-            mass.append(geom)
-    if mass:
-        print('--------------------------------------')
-        print(type(mass[0]))
-        print('--------------------------------------')
-        print('--------------------------------------')
-        print(dir(mass[0]))
-        print('--------------------------------------')
-        print('--------------------------------------')
-        print(mass[0].GetGeometryType())
-        print('--------------------------------------')
-        print('--------------------------------------')
-        print(len(mass))
-        print('--------------------------------------')
-    return layer
+            geom_type = geom.GetGeometryType()
+            print(geom.Centroid().ExportToWkt())
+            print(geom_type)
+    # if mass:
+    #     print('--------------------------------------')
+    #     print(type(mass[0]))
+    #     print('--------------------------------------')
+    #     print('--------------------------------------')
+    #     print(dir(mass[0]))
+    #     print('--------------------------------------')
+    #     print('--------------------------------------')
+    #     print(mass[0].GetGeometryType())
+    #     print('--------------------------------------')
+    #     print('--------------------------------------')
+    #     print(len(mass))
+    #     print('--------------------------------------')
+    # return layer
     
 
 if __name__ == "__main__":
