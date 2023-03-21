@@ -42,12 +42,6 @@ def unzip(path):
 def crossing_borders(fields_path, objects_path):
     path_to_borders, temp_borders = unzip(fields_path)
     path_to_objects, temp_objects = unzip(objects_path)
-    # print('----------------------')
-    # print(path_to_borders)
-    # print('----------------------')
-    # print('----------------------')
-    # print(path_to_objects)
-    # print('----------------------')
     field_files = os.listdir(path_to_borders)
     object_files = os.listdir(path_to_objects)
     geoms = []
@@ -91,7 +85,7 @@ def crossing_borders(fields_path, objects_path):
             new_row[0] = field_file.split(".")[0]
         answer.append(new_row)
         percent += 1
-        print(f"Counting is completed by {percent / len(field_files) * 100}%", end='\r')
+        print(f"Counting is completed by {round((percent / len(field_files) * 100), 2)}%", end='\r')
     if temp_borders:
         temp_borders.cleanup()
     if temp_objects:
