@@ -5,7 +5,7 @@ from .crossing_borders import unzip
 from osgeo import ogr, osr, gdal
 
 
-def crossing_borders_osgeo(fields_path, objects_path):
+def crossing_borders_osgeo(fields_path, objects_path, test=False):
     path_to_borders, temp_borders = unzip(fields_path)
     path_to_objects, temp_objects = unzip(objects_path)
     field_files = os.listdir(path_to_borders)
@@ -52,7 +52,8 @@ def crossing_borders_osgeo(fields_path, objects_path):
                 for geom in geoms[type_geom][1:]:
                     if border_polygon.Intersect(geom):
                         new_row[type_geom + 1] += 1
-                        geoms[type_geom].remove(geom)
+                        if not test:
+                            geoms[type_geom].remove(geom)
             new_row.append(max(sum(new_row[1:]), -1))
         except Exception:
             # If the file is not read, the value is -1
@@ -66,7 +67,6 @@ def crossing_borders_osgeo(fields_path, objects_path):
     if temp_objects:
         temp_objects.cleanup()
     return answer
-    
 
 
 if __name__ == "__main__":
