@@ -8,7 +8,6 @@ import fiona
 import csv
 import zipfile
 import tempfile
-import datetime
 
 
 def get_options():
@@ -43,6 +42,12 @@ def unzip(path):
 def crossing_borders(fields_path, objects_path):
     path_to_borders, temp_borders = unzip(fields_path)
     path_to_objects, temp_objects = unzip(objects_path)
+    # print('----------------------')
+    # print(path_to_borders)
+    # print('----------------------')
+    # print('----------------------')
+    # print(path_to_objects)
+    # print('----------------------')
     field_files = os.listdir(path_to_borders)
     object_files = os.listdir(path_to_objects)
     geoms = []
@@ -64,9 +69,9 @@ def crossing_borders(fields_path, objects_path):
                     answer[0].append(f'{shaped.geom_type}')
     answer[0].append('Total')
 
+    percent = 0
     for field_file in field_files:
         try:
-            print(f'Counting of intersections of the {field_file} region has been launched')
             path = os.path.join(path_to_borders, field_file)
             f = open(path, 'r')
             data_fields = json.load(f)
@@ -85,6 +90,8 @@ def crossing_borders(fields_path, objects_path):
             new_row = [-1 for _ in range(len(geoms) + 2)]
             new_row[0] = field_file.split(".")[0]
         answer.append(new_row)
+        percent += 1
+        print(f"Counting is completed by {percent / len(field_files) * 100}%")
     if temp_borders:
         temp_borders.cleanup()
     if temp_objects:
@@ -93,11 +100,7 @@ def crossing_borders(fields_path, objects_path):
 
 
 if __name__ == "__main__":
-    # opt = get_options()
-    # data = crossing_borders(opt.bor_dir, opt.obj_dir)
-    # write_to_csv(data, opt.path_to_csv)
-
-    data = crossing_borders(r'C:\Users\stoyan\PycharmProjects\taskScript\points_for_scripts.zip',
-                            r'C:\Users\stoyan\PycharmProjects\taskScript\oopt.zip')
-    write_to_csv(data, r'C:\Users\stoyan\PycharmProjects\taskScript\answer\answer.csv')
+    opt = get_options()
+    data = crossing_borders(opt.bor_dir, opt.obj_dir)
+    write_to_csv(data, opt.path_to_csv)
     print("Complete")
