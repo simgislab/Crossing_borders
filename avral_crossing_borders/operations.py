@@ -26,19 +26,9 @@ class CrossingBorders(AvralOperation):
 
     def main(self):
         objects_path = self.getInput(u"objects_path").strip()
-        func_start = datetime.datetime.now()
-        print("First function started")
-        data_1 = crossing_borders(self.borders_path, objects_path)
-        func_end = datetime.datetime.now()
-        print(f"The function was performed for {(func_end - func_start).total_seconds()} seconds")
-        func_start = datetime.datetime.now()
-        print("Second function started")
-        data_2 = crossing_borders_osgeo(self.borders_path, objects_path)
-        func_end = datetime.datetime.now()
-        print(f"The function was performed for {(func_end - func_start).total_seconds()} seconds")
-        write_to_csv(data_1, self.answer_path)
-        write_to_csv(data_2, self.answer_osgeo_path)
-        self.setOutput(u'csv', self.answer_path)
+        data = crossing_borders_osgeo(self.borders_path, objects_path)
+        write_to_csv(data, self.answer_osgeo_path)
+        self.setOutput(u'csv', self.answer_osgeo_path)
 
     def _do_work(self):
         self.logger.info(".START processing in cwd: %s" % os.getcwd())

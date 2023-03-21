@@ -38,6 +38,7 @@ def crossing_borders_osgeo(fields_path, objects_path):
     answer[0].append('Total')
 
     percent = 0
+    gdal.UseExceptions()
     for field_file in field_files:
         try:
             borderfile = os.path.join(path_to_borders, field_file)
@@ -59,12 +60,13 @@ def crossing_borders_osgeo(fields_path, objects_path):
             new_row[0] = field_file.split(".")[0]
         answer.append(new_row)
         percent += 1
-        print(f"Counting is completed by {percent / len(field_files) * 100}%", end='\r')
+        print(f"Counting is completed by {round((percent / len(field_files) * 100), 2)}%", end='\r')
     if temp_borders:
         temp_borders.cleanup()
     if temp_objects:
         temp_objects.cleanup()
     return answer
+    
 
 
 if __name__ == "__main__":
