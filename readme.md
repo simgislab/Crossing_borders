@@ -37,7 +37,7 @@ cd avral_crossing_borders
 docker build -t avral_crossing_borders:latest .
 docker run --rm -t -i -v ${PWD}:/opt/avral_crossing_borders avral_crossing_borders:latest /bin/bash
 cd /opt/avral_crossing_borders
-avral-exec --debug avral_crossing_borders 
+avral-exec --debug crossing_borders 
 ```
 With docker-compose
 ```bash

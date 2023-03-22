@@ -2,7 +2,7 @@ import sys
 import json
 import os
 from .crossing_borders import unzip
-from osgeo import ogr, osr, gdal
+from osgeo import ogr, gdal
 
 
 def crossing_borders_osgeo(fields_path, objects_path, test=False):

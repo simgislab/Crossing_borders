@@ -3,8 +3,6 @@ import os
 
 from avral.operation import AvralOperation
 from avral.io.types import StringType, FileType
-import datetime
-import time
 
 from .crossing_borders import crossing_borders, write_to_csv
 from .crossing_borders_osgeo import crossing_borders_osgeo
@@ -27,12 +25,7 @@ class CrossingBorders(AvralOperation):
 
     def main(self):
         objects_path = self.getInput(u"objects_path").strip()
-        func_start = time.perf_counter()
         data = crossing_borders_osgeo(self.borders_path, objects_path)
-        print(f"The function was performed for {time.perf_counter() - func_start} seconds")
-        func_start = time.perf_counter()
-        data = crossing_borders_osgeo(self.borders_path, objects_path, True)
-        print(f"The function was performed for {time.perf_counter() - func_start} seconds")
         write_to_csv(data, self.answer_osgeo_path)
         self.setOutput(u'csv', self.answer_osgeo_path)
 
