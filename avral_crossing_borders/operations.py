@@ -13,8 +13,8 @@ class CrossingBorders(AvralOperation):
         super(CrossingBorders, self).__init__(
             name="CrossingBorders",
             inputs={
-                u"borders_path": StringType(),
-                u"objects_path": StringType(),
+                u"borders_path": FileType(),
+                u"objects_path": FileType(),
             },
             outputs={
                 u'csv': FileType(),
