@@ -4,8 +4,8 @@ import os
 from avral.operation import AvralOperation
 from avral.io.types import StringType, FileType
 
-from .crossing_borders import crossing_borders, write_to_csv
-from .crossing_borders_osgeo import crossing_borders_osgeo
+from .utils import write_to_csv
+from .crossing_borders_osgeo import crossing_borders
 
 
 class CrossingBorders(AvralOperation):
@@ -20,14 +20,13 @@ class CrossingBorders(AvralOperation):
             },
         )
         self.borders_path = '/opt/avral_crossing_borders/points_for_scripts.zip'
-        self.answer_path = '/opt/avral_crossing_borders/answer/answer.csv'
-        self.answer_osgeo_path = '/opt/avral_crossing_borders/answer/answer_osgeo.csv'
+        self.answer_path = '/opt/avral_crossing_borders/answer.csv'
 
     def main(self):
         objects_path = self.getInput(u"objects_path").strip()
-        data = crossing_borders_osgeo(self.borders_path, objects_path)
-        write_to_csv(data, self.answer_osgeo_path)
-        self.setOutput(u'csv', self.answer_osgeo_path)
+        data = crossing_borders(self.borders_path, objects_path)
+        write_to_csv(data, self.answer_path)
+        self.setOutput(u'csv', self.answer_path)
 
     def _do_work(self):
         self.logger.info(".START processing in cwd: %s" % os.getcwd())
