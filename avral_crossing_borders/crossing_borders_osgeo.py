@@ -1,11 +1,12 @@
+import os
 import sys
 import json
-import os
-from .crossing_borders import unzip
 from osgeo import ogr, gdal
 
+from avral_crossing_borders.utils import unzip
 
-def crossing_borders_osgeo(fields_path, objects_path, test=False):
+
+def crossing_borders(fields_path, objects_path, test=False):
     path_to_borders, temp_borders = unzip(fields_path)
     path_to_objects, temp_objects = unzip(objects_path)
     field_files = os.listdir(path_to_borders)
@@ -13,8 +14,8 @@ def crossing_borders_osgeo(fields_path, objects_path, test=False):
     geoms = []
     answer = [[""]]
     driver = ogr.GetDriverByName("ESRI Shapefile")
-    geom_mass = []
 
+    # TODO: log progress
     for object_file in object_files:
         if '.shp' != object_file[-4:]:
             continue
@@ -61,7 +62,11 @@ def crossing_borders_osgeo(fields_path, objects_path, test=False):
             new_row[0] = field_file.split(".")[0]
         answer.append(new_row)
         percent += 1
+        # TODO: use logging https://docs.python.org/3/library/logging.html with console output
+        # TODO: Fix 46.6%% console output bug double %%
         print(f"Counting is completed by {round((percent / len(field_files) * 100), 2)}%", end='\r')
+
+    # TODO: run with any exceptions, such as abortion either
     if temp_borders:
         temp_borders.cleanup()
     if temp_objects:
@@ -69,6 +74,7 @@ def crossing_borders_osgeo(fields_path, objects_path, test=False):
     return answer
 
 
+# TODO: move to tests
 if __name__ == "__main__":
-    meh = crossing_borders_osgeo(r'/opt/avral_crossing_borders/points_for_scripts.zip',
+    meh = crossing_borders(r'/opt/avral_crossing_borders/points_for_scripts.zip',
                                  r'/opt/avral_crossing_borders/oopt.zip')
