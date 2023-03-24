@@ -40,7 +40,7 @@ cd avral_crossing_borders
 docker build -t avral_crossing_borders:latest .
 docker run --rm -t -i -v ${PWD}:/opt/avral_crossing_borders avral_crossing_borders:latest /bin/bash
 cd /opt/avral_crossing_borders
-avral-exec --debug crossing_borders {path_to_borders} {path_to_objects}
+avral-exec --debug crossing_borders /opt/avral_crossing_borders/tests/borders.zip /opt/avral_crossing_borders/tests/objects.zip 
 ```
 
 With docker-compose
@@ -50,10 +50,19 @@ docker-compose build
 docker-compose up
 ```
 
-Publish
+### Publish
 
 ```bash
 docker build -t avral_crossing_borders:latest .
-docker tag avral_crossing_borders:latest registry.nextgis.com/toolbox-workers/avral_crossing_borders:prod
-docker image push registry.nextgis.com/toolbox-workers/avral_crossing_borders:prod
+docker tag avral_crossing_borders:latest registry.nextgis.com/toolbox-workers/crossing_borders:prod
+docker image push registry.nextgis.com/toolbox-workers/crossing_borders:prod
+```
+
+#### IO
+
+```bash
+Inputs:
+[["borders_path", {"__type__": "FileType"}], ["objects_path", {"__type__": "FileType"}]]
+Outputs:
+[["output", {"__type__": "FileType"}]]
 ```
