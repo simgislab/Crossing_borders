@@ -2,7 +2,7 @@
 import os
 
 from avral.operation import AvralOperation
-from avral.io.types import StringType, FileType
+from avral.io.types import FileType
 
 from .utils import write_to_csv
 from .crossing_borders_osgeo import crossing_borders
@@ -13,21 +13,24 @@ class CrossingBorders(AvralOperation):
         super(CrossingBorders, self).__init__(
             name="CrossingBorders",
             inputs={
-                u"borders_path": FileType(),
-                u"objects_path": FileType(),
+                u"borders": FileType(),
+                u"objects": FileType(),
             },
             outputs={
-                u'csv': FileType(),
+                u'output': FileType(),
             },
         )
-        self.answer_path = '/opt/avral_crossing_borders/answer.csv'
+        self.answer_filename = 'answer.csv'
 
     def main(self):
-        borders_path = self.getInput(u"borders_path").strip()
-        objects_path = self.getInput(u"objects_path").strip()
+        borders_path = self.getInput(u"borders").strip()
+        objects_path = self.getInput(u"objects").strip()
         data = crossing_borders(borders_path, objects_path)
-        write_to_csv(data, self.answer_path)
-        self.setOutput(u'csv', self.answer_path)
+
+        answer_path = os.path.join(os.getcwd(), self.answer_filename)
+
+        write_to_csv(data, answer_path)
+        self.setOutput(u'output', answer_path)
 
     def _do_work(self):
         self.logger.info(".START processing in cwd: %s" % os.getcwd())
