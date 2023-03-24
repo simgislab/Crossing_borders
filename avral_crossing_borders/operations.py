@@ -5,7 +5,7 @@ from avral.operation import AvralOperation
 from avral.io.types import FileType
 
 from .utils import write_to_csv
-from .crossing_borders_shapely import crossing_borders
+from .crossing_borders_osgeo import crossing_borders
 
 
 class CrossingBorders(AvralOperation):
