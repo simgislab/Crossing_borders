@@ -2,8 +2,8 @@ from setuptools import setup
 
 requires = [
     'avral',
-    'fiona>=1.9.1',
-    'shapely>=2.0.1',
+    # 'fiona>=1.9.1',
+    # 'shapely>=2.0.1',
 ]
 
 setup(

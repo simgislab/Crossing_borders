@@ -62,7 +62,7 @@ docker image push registry.nextgis.com/toolbox-workers/crossing_borders:prod
 
 ```bash
 Inputs:
-[["borders_path", {"__type__": "FileType"}], ["objects_path", {"__type__": "FileType"}]]
+[["borders", {"__type__": "FileType"}], ["objects", {"__type__": "FileType"}]]
 Outputs:
 [["output", {"__type__": "FileType"}]]
 ```

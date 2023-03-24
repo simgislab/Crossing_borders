@@ -1,0 +1,7 @@
+
+FROM registry.nextgis.com/toolbox-workers/base:0.0.11-ubuntu2004-gdal
+
+RUN pip install fiona>=1.9.1 shapely>=2.0.1
+
+COPY . /opt/avral_crossing_borders
+RUN pip install --no-cache-dir /opt/avral_crossing_borders
