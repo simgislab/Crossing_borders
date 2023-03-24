@@ -7,11 +7,11 @@ from shapely.geometry import shape
 from .utils import unzip
 
 
-def crossing_borders(fields_path, objects_path):
-    path_to_borders, temp_borders = unzip(fields_path)
+def crossing_borders(borders_path, objects_path):
+    path_to_borders, temp_borders = unzip(borders_path)
     path_to_objects, temp_objects = unzip(objects_path)
-    path_to_borders = '/'.join([path_to_borders, fields_path.split('/')[-1].split('.')[0]])
-    path_to_objects = '/'.join([path_to_objects, objects_path.split('/')[-1].split('.')[0]])
+    path_to_borders = os.path.join(path_to_borders, os.path.basename(borders_path).split('.')[0])
+    path_to_objects = os.path.join(path_to_objects, os.path.basename(objects_path).split('.')[0])
     field_files = os.listdir(path_to_borders)
     object_files = os.listdir(path_to_objects)
     geoms = []
