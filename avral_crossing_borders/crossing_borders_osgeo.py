@@ -5,21 +5,34 @@ from osgeo import ogr, gdal
 
 from avral_crossing_borders.utils import unzip
 
+def temp_files(func):
+    def inner(fields_path, objects_path, logger):
+        path_to_borders, temp_borders = unzip(fields_path)
+        path_to_objects, temp_objects = unzip(objects_path)
+        path_to_borders = os.path.join(path_to_borders, os.path.basename(fields_path).split('.')[0])
+        path_to_objects = os.path.join(path_to_objects, os.path.basename(objects_path).split('.')[0])
+        result = func(path_to_borders, path_to_objects, logger)
+        if temp_borders:
+            temp_borders.cleanup()
+        if temp_objects:
+            temp_objects.cleanup()
+        return result
+    return inner
 
-def crossing_borders(fields_path, objects_path, test=False):
-    path_to_borders, temp_borders = unzip(fields_path)
-    path_to_objects, temp_objects = unzip(objects_path)
-    field_files = os.listdir(path_to_borders)
-    object_files = os.listdir(path_to_objects)
+
+@temp_files
+def crossing_borders(fields_path, objects_path, logger):
+    field_files = os.listdir(fields_path)
+    object_files = os.listdir(objects_path)
     geoms = []
     answer = [[""]]
     driver = ogr.GetDriverByName("ESRI Shapefile")
 
-    # TODO: log progress
+    logger.info('Geometry processing started')
     for object_file in object_files:
         if '.shp' != object_file[-4:]:
             continue
-        shapefile = os.path.join(os.getcwd(), path_to_objects, object_file)
+        shapefile = os.path.join(os.getcwd(), objects_path, object_file)
         dataSource = driver.Open(shapefile, 0)
         layer = dataSource.GetLayer()
         if layer is None:
@@ -37,12 +50,14 @@ def crossing_borders(fields_path, objects_path, test=False):
                 geoms.append([f'{geom_name}', geom])
                 answer[0].append(f'{geom_name}')
     answer[0].append('Total')
+    logger.info('Geometry processing is finished')
 
     percent = 0
     gdal.UseExceptions()
+    logger.info("Counting of intersections has started")
     for field_file in field_files:
         try:
-            borderfile = os.path.join(path_to_borders, field_file)
+            borderfile = os.path.join(fields_path, field_file)
             f = open(borderfile, 'r')
             data_fields = json.dumps(json.load(f)['features'][0]['geometry'])
             border_polygon = ogr.CreateGeometryFromJson(data_fields)
@@ -53,8 +68,6 @@ def crossing_borders(fields_path, objects_path, test=False):
                 for geom in geoms[type_geom][1:]:
                     if border_polygon.Intersect(geom):
                         new_row[type_geom + 1] += 1
-                        if not test:
-                            geoms[type_geom].remove(geom)
             new_row.append(max(sum(new_row[1:]), -1))
         except Exception:
             # If the file is not read, the value is -1
@@ -62,15 +75,9 @@ def crossing_borders(fields_path, objects_path, test=False):
             new_row[0] = field_file.split(".")[0]
         answer.append(new_row)
         percent += 1
-        # TODO: use logging https://docs.python.org/3/library/logging.html with console output
-        # TODO: Fix 46.6%% console output bug double %%
-        print(f"Counting is completed by {round((percent / len(field_files) * 100), 2)}%", end='\r')
-
-    # TODO: run with any exceptions, such as abortion either
-    if temp_borders:
-        temp_borders.cleanup()
-    if temp_objects:
-        temp_objects.cleanup()
+        print(f"Counting is completed by {('{0:.2f}'.format(percent / len(field_files) * 100))}%", end='\r')
+        
+    logger.info("Counting of intersections is finished")
     return answer
 
 

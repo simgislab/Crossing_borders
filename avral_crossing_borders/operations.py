@@ -5,7 +5,7 @@ from avral.operation import AvralOperation
 from avral.io.types import FileType
 
 from .utils import write_to_csv
-from .crossing_borders_osgeo import crossing_borders
+from .crossing_borders_shapely import crossing_borders
 
 
 class CrossingBorders(AvralOperation):
@@ -25,7 +25,7 @@ class CrossingBorders(AvralOperation):
     def main(self):
         borders_path = self.getInput(u"borders").strip()
         objects_path = self.getInput(u"objects").strip()
-        data = crossing_borders(borders_path, objects_path)
+        data = crossing_borders(borders_path, objects_path, logger=self.logger)
 
         answer_path = os.path.join(os.getcwd(), self.answer_filename)
 
