@@ -3,21 +3,8 @@ import sys
 import json
 from osgeo import ogr, gdal
 
-from avral_crossing_borders.utils import unzip
+from avral_crossing_borders.utils import temp_files
 
-def temp_files(func):
-    def inner(fields_path, objects_path, logger):
-        path_to_borders, temp_borders = unzip(fields_path)
-        path_to_objects, temp_objects = unzip(objects_path)
-        path_to_borders = os.path.join(path_to_borders, os.path.basename(fields_path).split('.')[0])
-        path_to_objects = os.path.join(path_to_objects, os.path.basename(objects_path).split('.')[0])
-        result = func(path_to_borders, path_to_objects, logger)
-        if temp_borders:
-            temp_borders.cleanup()
-        if temp_objects:
-            temp_objects.cleanup()
-        return result
-    return inner
 
 
 @temp_files
