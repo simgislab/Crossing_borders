@@ -14,22 +14,25 @@ def write_to_csv(mass_data, path_to_csv):
     create_file.close()
 
 
-def unzip(path):
-    if zipfile.is_zipfile(path):
-        with zipfile.ZipFile(path, 'r') as myzip:
-            name = '\\'.join(path.split('\\')[0:-1])
+def unzip(dir_path):
+    if zipfile.is_zipfile(dir_path):
+        with zipfile.ZipFile(dir_path, 'r') as myzip:
+            name = os.path.join(os.path.dirname(dir_path), '')
             temp_dir = tempfile.TemporaryDirectory(dir=name)
             myzip.extractall(temp_dir.name)
+            if os.listdir(temp_dir.name) and os.path.isdir(os.path.join(temp_dir.name, os.listdir(temp_dir.name)[0])):
+                first_file = os.path.join(temp_dir.name, os.listdir(temp_dir.name)[0])
+                while os.listdir(first_file) and os.path.isfile(first_file):
+                    first_file = os.path.join(first_file, os.listdir(first_file)[0])
+                return first_file, temp_dir
         return temp_dir.name, temp_dir
-    return path, None
+    return dir_path, None
 
 
 def temp_files(func):
     def inner(fields_path, objects_path, logger):
         path_to_borders, temp_borders = unzip(fields_path)
         path_to_objects, temp_objects = unzip(objects_path)
-        path_to_borders = os.path.join(path_to_borders, os.path.basename(fields_path).split('.')[0])
-        path_to_objects = os.path.join(path_to_objects, os.path.basename(objects_path).split('.')[0])
         result = func(path_to_borders, path_to_objects, logger)
         if temp_borders:
             temp_borders.cleanup()
