@@ -9,10 +9,10 @@ from .utils import temp_files
 
 @temp_files
 def crossing_borders(fields_path, objects_path, logger):
-    field_files = os.listdir(fields_path)
-    object_files = os.listdir(objects_path)
+    field_files = sorted(os.listdir(fields_path))
+    object_files = sorted(os.listdir(objects_path))
     geoms = []
-    answer = [[""]]
+    answer = [["Region"]]
 
     logger.info('Geometry processing started')
     for object_file in object_files:
