@@ -19,17 +19,19 @@ def read_border(path):
     return mass
 
 
-def read_objects(path):
-    exp = path.split('.')[-1]
-    mass = []
-    if exp == 'geojson':
-        f = open(path, 'r')
-        data_fields = json.dumps(json.load(f)['features'][0]['geometry'])
-        border_polygon = ogr.CreateGeometryFromJson(data_fields)
-        f.close()
-        mass.append(border_polygon)
-    
-    return mass
+def read_layer(layer, geoms, answer):
+    for feature in layer:
+        flag = False
+        geom_ref = feature.GetGeometryRef()
+        geom = ogr.CreateGeometryFromWkt(str(geom_ref))
+        geom_name = geom.GetGeometryName()
+        for mass_geom in geoms:
+            if mass_geom[0] == geom_name:
+                mass_geom.append(geom)
+                flag = True
+        if not flag:
+            geoms.append([f'{geom_name}', geom])
+            answer[0].append(f'{geom_name}')
 
 
 @temp_files
@@ -43,43 +45,22 @@ def crossing_borders(fields_path, objects_path, logger):
 
     logger.info('Geometry processing started')
     for object_file in object_files:
-        if '.shp' == object_file[-4:]:
+        extension = object_file.split('.')[-1]
+        if extension == 'shp':
             shapefile = os.path.join(os.getcwd(), objects_path, object_file)
             dataSource = driver.Open(shapefile, 0)
             layer = dataSource.GetLayer()
             if layer is None:
                 sys.exit(1)
-            for feature in layer:
-                flag = False
-                geom_ref = feature.GetGeometryRef()
-                geom = ogr.CreateGeometryFromWkt(str(geom_ref))
-                geom_name = geom.GetGeometryName()
-                for mass_geom in geoms:
-                    if mass_geom[0] == geom_name:
-                        mass_geom.append(geom)
-                        flag = True
-                if not flag:
-                    geoms.append([f'{geom_name}', geom])
-                    answer[0].append(f'{geom_name}')
-        if object_file.split('.')[-1] == 'gpkg':
+            read_layer(layer, geoms, answer)
+        elif extension == 'gpkg':
             driver_gpkg = ogr.GetDriverByName("GPKG")
             dataSource = ogr.Open(os.path.join(objects_path, object_file))
             ogrData = ogr.Open(os.path.join(objects_path, object_file))
             num = ogrData.GetLayerCount()
             for count in range(num):
                 layer = ogrData.GetLayer(count)
-                for feature in layer:
-                    flag = False
-                    geom_ref = feature.GetGeometryRef()
-                    geom = ogr.CreateGeometryFromWkt(str(geom_ref))
-                    geom_name = geom.GetGeometryName()
-                    for mass_geom in geoms:
-                        if mass_geom[0] == geom_name:
-                            mass_geom.append(geom)
-                            flag = True
-                    if not flag:
-                        geoms.append([f'{geom_name}', geom])
-                        answer[0].append(f'{geom_name}')
+                read_layer(layer, geoms, answer)
     answer[0].append('Total')
     logger.info('Geometry processing is finished')
 
