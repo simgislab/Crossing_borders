@@ -15,7 +15,7 @@ def read_border(path):
         border_polygon = ogr.CreateGeometryFromJson(data_fields)
         f.close()
         mass.append(border_polygon)
-    
+
     return mass
 
 
@@ -41,7 +41,6 @@ def crossing_borders(fields_path, objects_path, logger):
     geoms = []
     answer = [["Region"]]
     driver = ogr.GetDriverByName("ESRI Shapefile")
-    
 
     logger.info('Geometry processing started')
     for object_file in object_files:
@@ -89,7 +88,7 @@ def crossing_borders(fields_path, objects_path, logger):
         answer.append(new_row)
         percent += 1
         print(f"Counting is completed by {('{0:.2f}'.format(percent / len(field_files) * 100))}%", end='\r')
-        
+
     logger.info("Counting of intersections is finished")
     return answer
 
@@ -97,4 +96,4 @@ def crossing_borders(fields_path, objects_path, logger):
 # TODO: move to tests
 if __name__ == "__main__":
     meh = crossing_borders(r'/opt/avral_crossing_borders/points_for_scripts.zip',
-                                 r'/opt/avral_crossing_borders/oopt.zip')
+                           r'/opt/avral_crossing_borders/oopt.zip')

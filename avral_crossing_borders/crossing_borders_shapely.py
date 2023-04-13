@@ -58,4 +58,3 @@ def crossing_borders(fields_path, objects_path, logger):
         print(f"Counting is completed by {('{0:.2f}'.format(percent / len(field_files) * 100))}%", end='\r')
     logger.info("Counting of intersections is finished")
     return answer
-

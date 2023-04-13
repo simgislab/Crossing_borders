@@ -39,4 +39,5 @@ def temp_files(func):
         if temp_objects:
             temp_objects.cleanup()
         return result
+
     return inner
